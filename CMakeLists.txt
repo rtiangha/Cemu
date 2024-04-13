@@ -73,7 +73,11 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO ON)
 
+# Set position independent code
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 if (MSVC)
+        add_compile_options(/O2 /favor:INTEL64 /arch:AVX2)
 	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT CemuBin)
 	# floating point model: precise, fiber safe optimizations
 	add_compile_options(/EHsc /fp:precise)
