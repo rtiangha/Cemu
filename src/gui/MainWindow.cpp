@@ -643,16 +643,18 @@ void MainWindow::OnFileMenu(wxCommandEvent& event)
 	if (menuId == MAINFRAME_MENU_ID_FILE_LOAD)
 	{
 		const auto wildcard = formatWxString(
-			"{}|*.wud;*.wux;*.wua;*.iso;*.rpx;*.elf;title.tmd"
+			"{}|*.wud;*.wux;*.wua;*.wuhb;*.iso;*.rpx;*.elf;title.tmd"
 			"|{}|*.wud;*.wux;*.iso"
 			"|{}|title.tmd"
 			"|{}|*.wua"
+			"|{}|*.wuhb"
 			"|{}|*.rpx;*.elf"
 			"|{}|*",
-			_("All Wii U files (*.wud, *.wux, *.wua, *.iso, *.rpx, *.elf)"),
+			_("All Wii U files (*.wud, *.wux, *.wua, *.wuhb, *.iso, *.rpx, *.elf)"),
 			_("Wii U image (*.wud, *.wux, *.iso, *.wad)"),
 			_("Wii U NUS content"),
 			_("Wii U archive (*.wua)"),
+			_("Wii U homebrew bundle (*.wuhb)"),
 			_("Wii U executable (*.rpx, *.elf)"),
 			_("All files (*.*)")
 		);
@@ -945,38 +947,6 @@ void MainWindow::OnAccountSelect(wxCommandEvent& event)
 	// config.account.online_enabled.value = false; // reset online for safety
 	g_config.Save();
 }
-
-//void MainWindow::OnConsoleRegion(wxCommandEvent& event)
-//{
-//	switch (event.GetId())
-//	{
-//	case MAINFRAME_MENU_ID_OPTIONS_REGION_AUTO:
-//		GetConfig().console_region = ConsoleRegion::Auto;
-//		break;
-//	case MAINFRAME_MENU_ID_OPTIONS_REGION_JPN:
-//		GetConfig().console_region = ConsoleRegion::JPN;
-//		break;
-//	case MAINFRAME_MENU_ID_OPTIONS_REGION_USA:
-//		GetConfig().console_region = ConsoleRegion::USA;
-//		break;
-//	case MAINFRAME_MENU_ID_OPTIONS_REGION_EUR:
-//		GetConfig().console_region = ConsoleRegion::EUR;
-//		break;
-//	case MAINFRAME_MENU_ID_OPTIONS_REGION_CHN:
-//		GetConfig().console_region = ConsoleRegion::CHN;
-//		break;
-//	case MAINFRAME_MENU_ID_OPTIONS_REGION_KOR:
-//		GetConfig().console_region = ConsoleRegion::KOR;
-//		break;
-//	case MAINFRAME_MENU_ID_OPTIONS_REGION_TWN:
-//		GetConfig().console_region = ConsoleRegion::TWN;
-//		break;
-//	default:
-//		cemu_assert_debug(false);
-//	}
-//	
-//	g_config.Save();
-//}
 
 void MainWindow::OnConsoleLanguage(wxCommandEvent& event)
 {
@@ -2292,9 +2262,11 @@ void MainWindow::RecreateMenu()
 	// help menu
 	wxMenu* helpMenu = new wxMenu();
 	m_check_update_menu = helpMenu->Append(MAINFRAME_MENU_ID_HELP_UPDATE, _("&Check for updates"));
-#if BOOST_OS_LINUX || BOOST_OS_MACOS
-	m_check_update_menu->Enable(false);
-#endif
+#if BOOST_OS_LINUX
+	if (!std::getenv("APPIMAGE")) {
+		m_check_update_menu->Enable(false);
+	}
+#endif	
 	helpMenu->Append(MAINFRAME_MENU_ID_HELP_GETTING_STARTED, _("&Getting started"));
 	helpMenu->AppendSeparator();
 	helpMenu->Append(MAINFRAME_MENU_ID_HELP_ABOUT, _("&About Cemu"));
